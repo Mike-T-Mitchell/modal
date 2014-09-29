@@ -1,0 +1,24 @@
+<html>
+
+<head></head>
+
+<body>
+
+    <div id="product">
+
+        <strong>Product Information Here:</strong><br />
+        <div class="information"></div>
+
+    </div>
+
+    <script>
+            // update path below to point to local file
+            $('.information').load('/content/modal-test/assets/js/jsonData.js', function() {
+                console.log('Fired.');
+            });
+
+    </script>
+
+</body>
+
+</html>

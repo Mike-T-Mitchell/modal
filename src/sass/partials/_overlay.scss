@@ -1,0 +1,40 @@
+// main modal overlay styles
+
+#bgOverlay {
+  position: fixed;
+  display: block;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #eee;
+  opacity: .5;
+  filter: alpha(opacity=50);
+  z-index: 5002;
+}
+
+#modal {
+  position: absolute;
+  padding: 8px;
+  z-index: 5003;
+  max-width: 95%;
+}
+
+#content {
+  background: #fff;
+  padding: 20px;
+  height: inherit;
+  overflow-wrap: break-word;
+}
+
+#close {
+  position: absolute;
+  // update this to point to local file -- currently using staging file structure
+  background: url('/content/modal-test/images/close.png') 0 0 no-repeat;
+  width: 24px;
+  height: 27px;
+  display: block;
+  text-indent: -9999px;
+  top: -7px;
+  right: -7px;
+}

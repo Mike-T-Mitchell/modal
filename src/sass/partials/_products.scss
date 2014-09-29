@@ -1,0 +1,29 @@
+// product styles loaded within modal window
+
+.modalShop {
+  position: relative;
+  min-height: 421px;
+  width: 100%;
+  top: 10px;
+  text-align: center;
+  background-color: #fff;
+}
+
+.modalProducts {
+  position: relative;
+  margin: 0 auto;
+  width: 90%;
+  ul {
+    margin: 0;
+    padding: 0;
+    position: relative;
+  }
+}
+
+.loading {
+  position: absolute;
+  height: 10px;
+  left: 0px;
+  right: 0px;
+  margin: auto;
+}

@@ -1,0 +1,181 @@
+(function(window){
+'use strict';
+
+// CONSTRUCTOR -- makes our variables available
+// to our methods and executes the init method
+
+var InternalModal = function() {
+    this.$bgOverlay = $('<div id="bgOverlay"></div>');      // semi-opaque background
+    this.$modal = $('<div id="modal"></div>');              // modal window itself
+    this.$content = $('<div id="content"></div>');          // content within the modal window
+    this.$close = $('<a id="close" href="#">close</a>');     // close button
+    this.$window = $(window);
+
+    this.init();
+    this._bindEvents();
+
+};
+
+var IMProto = InternalModal.prototype;
+
+IMProto.init = function(){
+    this.$modal.append(this.$content, this.$close);
+    $('body').append(this.$bgOverlay, this.$modal);
+};
+
+IMProto.positionCenter = function(){
+    var top = Math.max(this.$window.height() - this.$modal.outerHeight(), 0) / 2; // sample distance to top of screen to ensure we stay equidistant on resize
+    var left = Math.max(this.$window.width() - this.$modal.outerWidth(), 0) / 2;  // sample distance to left side of screen to ensure we stay equidistant on resize
+
+    // add the scrollTop and scrollLeft values to the values we found above and apply the sum of each as top and left attributes to the css
+    this.$modal.css({
+        top: top + this.$window.scrollTop(),
+        left: left + this.$window.scrollLeft()
+    });
+};
+
+IMProto.openModal = function(settings){
+
+    // if no settings passed, exit
+    if ((!settings)) {
+        return;
+    }
+
+    this.$modal.css({
+        width: settings.width || '500px',
+        height: settings.height || '500px'
+    });
+
+    // center the opened modal
+    this.positionCenter();
+
+    // show the modal
+    this.$modal.show();
+
+    // show the semi-opaque bg
+    this.$bgOverlay.show();
+
+    this.$content.append(settings.content);
+};
+
+IMProto.closeModal = function(){
+    this.$modal.hide();
+    this.$bgOverlay.hide();
+    this.$content.empty();
+    this._destroyModal();
+};
+
+IMProto._bindEvents = function(){
+    this.$window.on('resize.modal', this.positionCenter.bind(this));
+    this.$window.on('load', this.positionCenter.bind(this));
+    this.$close.on('click', this.closeModal.bind(this));
+};
+
+IMProto._destroyModal = function(){
+    this.$window.off('resize.modal', this.positionCenter.bind(this));
+};
+
+/*
+ * INJECT PRODUCTS INTO MODAL --
+ *
+ * After we get the JSON data, create & apply product data to
+ * the client-side template by looping through the JSON file
+ */
+
+// get products and display them in modal
+    function item_data(category, navigation) {
+        var promise;
+        // check domain
+        if (fpDomain.indexOf('uk') >= 0) {
+            siteId = 3;
+            translationId = 'B2A4F921-DBFA-414C-8EF9-0B587E496897';
+        } else if (fpDomain.indexOf('cn') >= 0) {
+            siteId = 4;
+            translationId = '65785B51-1D48-4D97-862B-735290AB81CA';
+        }
+        $('.modalProducts ul').animate({opacity: 0}, function () {
+
+            $('.items_loading').animate({opacity: 1}, 250);
+
+            if (category === '') {
+                promise = WEBLINC.getProductsByCategory({siteID: siteId, translationID: translationId, navigationItemID: navigation});
+            } else if (navigation === '') {
+                promise = WEBLINC.getProductsByCategory({siteID: siteId, translationID: translationId, categoryID: category});
+            } else {
+                promise = WEBLINC.getProductsByCategory({siteID: siteId, translationID: translationId, navigationItemID: navigation, categoryID: category});
+            }
+
+            promise.success(function (jsonResponse) {
+                $('.ebook_items ul').html('');
+
+                $('.items_loading').animate({opacity: 0}, 250, function () {
+                    $('.ebook_items ul').animate({opacity: 1}, 500);
+                });
+
+                var
+                    template = $('#ebookItems').html(),
+                    parse_info = $.parseJSON(JSON.stringify(jsonResponse));
+
+                $.each(parse_info.DATA, function(i, elem) {
+                    var
+                        image_attr,
+                        image_suffix,
+                        renderedTemplate,
+                        itemData = {};
+
+                    if (elem[4] !== null) {
+                        image_attr = elem[4].split('_');
+                        image_suffix = image_attr[2].replace('$browse$', '$browse-lt$');
+                    } else {
+                        image_attr = [];
+                        image_attr[1] = '';
+                        image_attr[2] = '';
+                        image_suffix = '';
+                    }
+
+
+                    itemData = {
+                        id: elem[0],
+                        symbol: elem[1],
+                        code: elem[2],
+                        name: elem[3],
+                        image: elem[4],
+                        alias: elem[5],
+                        style: elem[6],
+                        color: elem[7],
+                        org_price: formatPrice(elem[8]),
+                        cur_price: formatPrice(elem[9]),
+                        sale_price: formatPrice(elem[10]),
+                        order: elem[11],
+                        count: parse_info.DATA.length,
+                        imgAttr1: image_attr[1],
+                        imgAttr2: image_suffix
+                    };
+
+                    renderedTemplate = _.template(template, { itemData: itemData });
+                    $('.ebook_items ul').append(renderedTemplate);
+                });
+
+                // initialize quickview
+                WEBLINC.widgets.init($('.ebook_items'));
+            });
+
+            $('.ebook_slider_prev_action, .ebook_slider_next_action').click(function () {
+                promise.abort();
+            });
+
+        });
+    }
+/* END PRODUCT DISPLAY */
+
+
+var SimpleModal = function(){
+    var modal = new InternalModal();
+    this.init = modal.init.bind(modal);
+    this.positionCenter = modal.positionCenter.bind(modal);
+    this.openModal = modal.openModal.bind(modal);
+    this.closeModal = modal.closeModal.bind(modal);
+};
+
+window.SimpleModal = SimpleModal;
+}(window));

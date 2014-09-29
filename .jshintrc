@@ -1,0 +1,31 @@
+{
+    "nonew": true,
+    "jquery": true,
+    "curly": true,
+    "noarg": true,
+    "forin": true,
+    "nomen": true,
+    "noempty": true,
+    "phantom": true,
+    "node": true,
+    "eqeqeq": true,
+    "strict": true,
+    "undef": true,
+    "newcap": true,
+    "immed": true,
+    "browser": true,
+    "freeze": true,
+    "multistr": true,
+    "predef": [
+        "_",
+        "cmCreatePageElementTag",
+        "Modernizr",
+        "WEBLINC",
+        "describe",
+        "it",
+        "before",
+        "beforeEach",
+        "after",
+        "afterEach"
+    ]
+}

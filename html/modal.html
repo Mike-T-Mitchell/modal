@@ -1,0 +1,59 @@
+<html>
+
+    <head>
+
+        <title>Modal POC</title>
+
+        <!-- update paths below to point to local file -->
+        <link rel="stylesheet" href="/content/modal-test/assets/css/styles.css" />
+
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+        <script type="text/javascript" src="/content/modal-test/assets/js/modal.js"></script>
+
+    </head>
+
+    <body>
+
+        <a id="modalOpen" href="#">Open Modal</a>
+
+        <section class="modalShop">
+            <div class="modalProducts">
+                <div class="loading" style="opacity: 0;">
+                    <img src="//static.fpassets.com/images/content/homepage_constants/images/loading.gif" alt="loading"></div>
+                <ul class="clearfix" style="opacity: 1;"></ul>
+            </div>
+        </section>
+
+        <!-- client-side template for product data -->
+        <script type="template" id="modalProducts">
+            <% if ((itemData.count + 1) % 5 === 0) { %>
+            <li class="last_item">
+                <% } else { %>
+            <li>
+                <% } %>
+                <div>
+                    <a class="quickview item_container" href="/<%- itemData.alias %>/_/CMPAGEID/Home%20Page/" data-dialog='{"addClass": "wl-dialog--ht"}'>
+                        <img src="http://images5.freepeople.com/is/image/FreePeople/<%- itemData.style %>_<%- itemData.imgAttr1 %>_<%- itemData.imgAttr2 %>" width="236" height="315" alt="<%- itemData.name %>" />
+                    </a>
+                </div>
+                <p>
+                    <a class="quickview" href="<%- itemData.alias %>/_/CMPAGEID/Home%20Page/" data-dialog='{"addClass": "wl-dialog--ht"}'><%- itemData.name %></a>
+                </p>
+                <% if (itemData.sale_price === true) { %>
+                <p class="item_price strikethrough">
+                    <span><%= itemData.symbol  + itemData.orig_price %></span>
+                <p class="item_price">
+                    <span><%= itemData.symbol + itemData.cur_price %></span>
+                </p>
+                </p>
+                <% } else { %>
+                <p>
+                    <span><%= itemData.symbol + itemData.cur_price %></span>
+                </p>
+                <% } %>
+            </li>
+        </script>
+
+    </body>
+
+</html>
